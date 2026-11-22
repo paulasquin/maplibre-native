@@ -99,7 +99,8 @@ public:
                 jni::jdouble,
                 jni::jdouble,
                 jni::jdouble,
-                const jni::Array<jni::jdouble>&);
+                const jni::Array<jni::jdouble>&,
+                jni::jdouble);
 
     void easeTo(jni::JNIEnv&,
                 jni::jdouble,

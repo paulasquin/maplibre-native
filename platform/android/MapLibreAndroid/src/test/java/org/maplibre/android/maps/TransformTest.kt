@@ -35,7 +35,7 @@ class TransformTest : BaseTest() {
         every { nativeMapView.isDestroyed } returns false
         every { nativeMapView.cameraPosition } returns CameraPosition.DEFAULT
         every { nativeMapView.cancelTransitions() } answers {}
-        every { nativeMapView.jumpTo(any(), any(), any(), any(), any()) } answers {}
+        every { nativeMapView.jumpTo(any(), any(), any(), any(), any(), any()) } answers {}
         every { nativeMapView.easeTo(any(), any(), any(), any(), any(), any(), any()) } answers {}
         every { nativeMapView.flyTo(any(), any(), any(), any(), any(), any()) } answers {}
         every { nativeMapView.minZoom = any() } answers {}
@@ -62,7 +62,10 @@ class TransformTest : BaseTest() {
 
         mainLooper.idle()
         verify { cameraChangeDispatcher.onCameraMove() }
-        verify { nativeMapView.jumpTo(target, -1.0, -1.0, -1.0, null) }
+        verify { nativeMapView.jumpTo(target, -1.0, -1.0, -1.0, null, -1.0) }
+
+        transform.moveCamera(maplibreMap, CameraUpdateFactory.newCameraPosition(CameraPosition.Builder().target(LatLng(3.0, 4.0)).build()), 1035.0, null)
+        verify { nativeMapView.jumpTo(LatLng(3.0, 4.0), -1.0, -1.0, -1.0, null, 1035.0) }
         verify { callback.onFinish() }
     }
 
@@ -80,7 +83,7 @@ class TransformTest : BaseTest() {
         transform.moveCamera(maplibreMap, update, null) // Initialize camera position
         transform.moveCamera(maplibreMap, update, callback)
 
-        verify(exactly = 1, verifyBlock = { nativeMapView.jumpTo(any(), any(), any(), any(), any()) })
+        verify(exactly = 1, verifyBlock = { nativeMapView.jumpTo(any(), any(), any(), any(), any(), any()) })
         verify { callback.onFinish() }
     }
 

@@ -779,11 +779,17 @@ final class NativeMapView implements NativeMap {
 
   @Override
   public void jumpTo(@NonNull LatLng center, double zoom, double pitch, double angle, double[] padding) {
+    jumpTo(center, zoom, pitch, angle, padding, -1);
+  }
+
+  @Override
+  public void jumpTo(@NonNull LatLng center, double zoom, double pitch, double angle, double[] padding,
+                     double centerAltitude) {
     if (checkState("jumpTo")) {
       return;
     }
     nativeJumpTo(angle, center.getLatitude(), center.getLongitude(), pitch, zoom,
-      getAnimationPaddingAndClearCachedInsets(padding));
+      getAnimationPaddingAndClearCachedInsets(padding), centerAltitude);
   }
 
   @Override
@@ -1793,7 +1799,7 @@ final class NativeMapView implements NativeMap {
 
   @Keep
   private native void nativeJumpTo(double angle, double latitude, double longitude, double pitch, double zoom,
-                                   double[] padding);
+                                   double[] padding, double centerAltitude);
 
   @Keep
   private native void nativeEaseTo(double angle, double latitude, double longitude,

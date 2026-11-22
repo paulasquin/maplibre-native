@@ -778,6 +778,21 @@ public final class MapLibreMap {
   }
 
   /**
+   * Repositions the camera according to the instructions defined in the update, the altitude of the point it looks at set to
+   * [centerAltitude] metres above sea level (3D terrain), at once. The plain moveCamera leaves that altitude as it is, which
+   * {@link #setCenterClampedToGround(boolean)} keeps on the ground; this one places the camera exactly, frame by frame.
+   *
+   * @param update         The change that should be applied to the camera
+   * @param centerAltitude the centre's altitude in metres; -1 or NaN leaves it as it is
+   * @param callback       the callback to be invoked when the move is done
+   */
+  public final void moveCamera(@NonNull final CameraUpdate update, double centerAltitude,
+                               @Nullable final MapLibreMap.CancelableCallback callback) {
+    notifyDeveloperAnimationListeners();
+    transform.moveCamera(MapLibreMap.this, update, centerAltitude, callback);
+  }
+
+  /**
    * Gradually move the camera by the default duration, zoom will not be affected unless specified
    * within {@link CameraUpdate}. If {@link #getCameraPosition()} is called during the animation,
    * it will return the current location of the camera in flight.

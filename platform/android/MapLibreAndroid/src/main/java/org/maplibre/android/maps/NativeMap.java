@@ -48,6 +48,8 @@ interface NativeMap {
 
   void jumpTo(@NonNull LatLng center, double zoom, double pitch, double bearing, double[] padding);
 
+  void jumpTo(@NonNull LatLng center, double zoom, double pitch, double bearing, double[] padding, double centerAltitude);
+
   void easeTo(@NonNull LatLng center, double zoom, double bearing, double pitch, double[] padding, long duration,
               boolean easingInterpolator);
 

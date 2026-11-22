@@ -108,12 +108,21 @@ public class Transform implements MapView.OnCameraDidChangeListener {
   @UiThread
   public void moveCamera(@NonNull MapLibreMap maplibreMap, CameraUpdate update,
                                @Nullable final MapLibreMap.CancelableCallback callback) {
+    moveCamera(maplibreMap, update, -1, callback);
+  }
+
+  /**
+   * Internal use: as moveCamera, the centre's altitude set to [centerAltitude] metres (-1 or NaN: left as it is).
+   */
+  @UiThread
+  public void moveCamera(@NonNull MapLibreMap maplibreMap, CameraUpdate update, double centerAltitude,
+                               @Nullable final MapLibreMap.CancelableCallback callback) {
     CameraPosition cameraPosition = update.getCameraPosition(maplibreMap);
     if (isValidCameraPosition(cameraPosition)) {
       cancelTransitions();
       cameraChangeDispatcher.onCameraMoveStarted(OnCameraMoveStartedListener.REASON_API_ANIMATION);
       nativeMap.jumpTo(cameraPosition.target, cameraPosition.zoom, cameraPosition.tilt, cameraPosition.bearing,
-        cameraPosition.padding);
+        cameraPosition.padding, centerAltitude);
       invalidateCameraPosition();
       cameraChangeDispatcher.onCameraIdle();
       handler.post(new Runnable() {

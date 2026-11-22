@@ -313,12 +313,17 @@ void NativeMapView::jumpTo(jni::JNIEnv& env,
                            jni::jdouble longitude,
                            jni::jdouble pitch,
                            jni::jdouble zoom,
-                           const jni::Array<jni::jdouble>& padding) {
+                           const jni::Array<jni::jdouble>& padding,
+                           jni::jdouble centerAltitude) {
     mln::CameraOptions options;
     if (bearing != -1) {
         options.bearing = bearing;
     }
     options.center = mln::LatLng(latitude, longitude);
+    // The altitude of the point the camera looks at (3D terrain); -1 or NaN keeps the current one.
+    if (centerAltitude != -1 && !std::isnan(centerAltitude)) {
+        options.centerAltitude = centerAltitude;
+    }
     if (padding) {
         assert(padding.Length(env) == 4);
         options.padding = mln::EdgeInsets{
