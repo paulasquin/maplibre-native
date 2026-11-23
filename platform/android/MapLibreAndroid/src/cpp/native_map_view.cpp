@@ -47,7 +47,9 @@
 
 #include <android/native_window_jni.h>
 
+#include <algorithm>
 #include <cassert>
+#include <cmath>
 #include <cstdlib>
 #include <ctime>
 
@@ -1376,6 +1378,28 @@ jni::jint NativeMapView::getTerrainSkirtLength(JNIEnv&) {
     return jni::jint(static_cast<int>(map->getTerrainSkirtLength()));
 }
 
+void NativeMapView::setTerrainHaze(JNIEnv&, jni::jint color, jni::jfloat range) {
+    // An Android colour int is straight ARGB; mln::Color is premultiplied.
+    const float a = ((color >> 24) & 0xFF) / 255.0f;
+    const float r = ((color >> 16) & 0xFF) / 255.0f;
+    const float g = ((color >> 8) & 0xFF) / 255.0f;
+    const float b = (color & 0xFF) / 255.0f;
+    map->setTerrainHaze(mln::Color(r * a, g * a, b * a, a), range);
+}
+
+jni::jint NativeMapView::getTerrainHazeColor(JNIEnv&) {
+    const mln::Color color = map->getTerrainHazeColor();
+    const auto channel = [&](float premultiplied) {
+        return color.a == 0.0f ? 0 : static_cast<int>(std::lround(std::min(premultiplied / color.a, 1.0f) * 255.0f));
+    };
+    const int alpha = static_cast<int>(std::lround(color.a * 255.0f));
+    return jni::jint((alpha << 24) | (channel(color.r) << 16) | (channel(color.g) << 8) | channel(color.b));
+}
+
+jni::jfloat NativeMapView::getTerrainHazeRange(JNIEnv&) {
+    return jni::jfloat(map->getTerrainHazeRange());
+}
+
 void NativeMapView::setCenterClampedToGround(JNIEnv&, jni::jboolean clamped) {
     map->setCenterClampedToGround(clamped);
 }
@@ -1574,6 +1598,9 @@ void NativeMapView::registerNative(jni::JNIEnv& env) {
         METHOD(&NativeMapView::getCenterAltitude, "nativeGetCenterAltitude"),
         METHOD(&NativeMapView::setTerrainSkirtLength, "nativeSetTerrainSkirtLength"),
         METHOD(&NativeMapView::getTerrainSkirtLength, "nativeGetTerrainSkirtLength"),
+        METHOD(&NativeMapView::setTerrainHaze, "nativeSetTerrainHaze"),
+        METHOD(&NativeMapView::getTerrainHazeColor, "nativeGetTerrainHazeColor"),
+        METHOD(&NativeMapView::getTerrainHazeRange, "nativeGetTerrainHazeRange"),
         METHOD(&NativeMapView::setCenterClampedToGround, "nativeSetCenterClampedToGround"),
         METHOD(&NativeMapView::getCenterClampedToGround, "nativeGetCenterClampedToGround"),
         METHOD(&NativeMapView::setDebugAboveGroundLog, "nativeSetDebugAboveGroundLog"),

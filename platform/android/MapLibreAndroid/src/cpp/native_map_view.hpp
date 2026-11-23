@@ -357,6 +357,12 @@ public:
 
     jni::jint getTerrainSkirtLength(JNIEnv&);
 
+    void setTerrainHaze(JNIEnv&, jni::jint, jni::jfloat);
+
+    jni::jint getTerrainHazeColor(JNIEnv&);
+
+    jni::jfloat getTerrainHazeRange(JNIEnv&);
+
     void setCenterClampedToGround(JNIEnv&, jni::jboolean);
 
     jni::jboolean getCenterClampedToGround(JNIEnv&);

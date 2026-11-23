@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.FloatRange;
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
@@ -467,6 +468,44 @@ public final class MapLibreMap {
   @NonNull
   public TerrainSkirtLength getTerrainSkirtLength() {
     return TerrainSkirtLength.values()[nativeMapView.getTerrainSkirtLength()];
+  }
+
+  /**
+   * Sets the distance haze over 3D terrain: far ground fades toward {@code color}, blending the
+   * far edge of the terrain into whatever is drawn behind the map, such as a sky the app paints
+   * under a transparent map view.
+   * <p>
+   * The colour's alpha is the most the ground is blended toward it. {@code range} is how far the
+   * haze reaches, in multiples of the map centre's distance from the camera: ground that far away
+   * and beyond takes the full colour; nearer ground fades toward it as in maplibre-gl-js's terrain
+   * fog with a {@code fog-ground-blend} of 0.5, so with 3 the haze begins at one and a half times
+   * the centre's distance. As in maplibre-gl-js, the haze fades in between pitches of 60 and 70
+   * degrees. A range of 1 or less turns the haze off, and one above 1000 is held at 1000. The
+   * default is no haze (transparent, range 0). Has no effect when terrain is not enabled.
+   * </p>
+   *
+   * @param color the colour far terrain fades toward, as an ARGB colour int
+   * @param range how far the haze reaches, in multiples of the centre's distance from the camera
+   */
+  public void setTerrainHaze(@ColorInt int color, float range) {
+    nativeMapView.setTerrainHaze(color, range);
+  }
+
+  /**
+   * @return the colour far terrain fades toward, as an ARGB colour int
+   * @see MapLibreMap#setTerrainHaze(int, float)
+   */
+  @ColorInt
+  public int getTerrainHazeColor() {
+    return nativeMapView.getTerrainHazeColor();
+  }
+
+  /**
+   * @return how far the distance haze reaches; 0 when it is off
+   * @see MapLibreMap#setTerrainHaze(int, float)
+   */
+  public float getTerrainHazeRange() {
+    return nativeMapView.getTerrainHazeRange();
   }
 
   /**
